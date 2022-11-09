@@ -8,10 +8,12 @@ let timerId = null;
 refs.start.addEventListener('click', onStartClick);
 refs.stop.addEventListener('click', onStopClick);
 
+refs.stop.disabled = true;
+
 function onStartClick() {
-  if (!timerId) {
-    timerId = setInterval(changeBodyBgColor, 1000);
-  }
+  timerId = setInterval(changeBodyBgColor, 1000);
+  refs.start.disabled = true;
+  refs.stop.disabled = false;
 }
 
 function changeBodyBgColor() {
@@ -24,5 +26,6 @@ function getRandomHexColor() {
 
 function onStopClick() {
   clearInterval(timerId);
-  timerId = null;
+  refs.start.disabled = false;
+  refs.stop.disabled = true;
 }

@@ -1,9 +1,17 @@
 import flatpickr from 'flatpickr';
 import 'flatpickr/dist/flatpickr.min.css';
+import Notiflix from 'notiflix';
 
-const myInput = document.querySelector('#datetime-picker');
+const refs = {
+  myInput: document.querySelector('#datetime-picker'),
+  start: document.querySelector('[data-start]'),
+  days: document.querySelector('[data-days]'),
+  hours: document.querySelector('[data-hours]'),
+  minutes: document.querySelector('[data-minutes]'),
+  seconds: document.querySelector('[data-seconds]'),
+};
 
-const fp = flatpickr(myInput, options);
+// const myInput = document.querySelector('#datetime-picker');
 
 const calendars = flatpickr('.calendar', {});
 calendars[0]; // flatpickr
@@ -14,18 +22,40 @@ const options = {
   defaultDate: new Date(),
   minuteIncrement: 1,
   onClose(selectedDates) {
-    console.log(selectedDates[0]);
+    // console.log(selectedDates[0]);
+    if (selectedDates[0].getTime() - Date.now() < 0) {
+      refs.start.disabled = true;
+      alert('Please choose a date in the future');
+    } else {
+      refs.start.disabled = false;
+      console.log(convertMs(selectedDates[0].getTime() - Date.now()));
+    }
   },
 };
 
-import flatpickr from 'flatpickr';
-import 'flatpickr/dist/flatpickr.min.css';
-import Notiflix from 'notiflix';
+const fp = flatpickr(refs.myInput, options);
+// console.log(fp.selectedDates);
+// console.log(refs.days.textContent);
 
-// 1. Надо в функции вывода модалки описать текущую дату (selectedDates < текущей), и что ранняя дата это не правильно. (DONE)
-// 2. Надо определить как в text.Content рефов присваивать разницу между выбраной датой и текущей (DONE)
-// 2.1 Нужна проверка: Если разница между текущей датой и выбранной меньше 0, то в textContent рефов присваивается 00 (DONE)
-// 3. Надо определить как отсчет таймера запустить в обратную сторону. (DONE)
-// 4. Когда text.Content рефов = 00 то надо таймер остановить clearInterval(this.intervalId)
+function convertMs(ms) {
+  // Number of milliseconds per unit of time
+  const second = 1000;
+  const minute = second * 60;
+  const hour = minute * 60;
+  const day = hour * 24;
 
-const inputDayTime = document.querySelector('#datetime-picker');
+  // Remaining days
+  const days = Math.floor(ms / day);
+  // Remaining hours
+  const hours = Math.floor((ms % day) / hour);
+  // Remaining minutes
+  const minutes = Math.floor(((ms % day) % hour) / minute);
+  // Remaining seconds
+  const seconds = Math.floor((((ms % day) % hour) % minute) / second);
+
+  return { days, hours, minutes, seconds };
+}
+
+// console.log(convertMs(2000)); // {days: 0, hours: 0, minutes: 0, seconds: 2}
+// console.log(convertMs(140000)); // {days: 0, hours: 0, minutes: 2, seconds: 20}
+// console.log(convertMs(24140000)); // {days: 0, hours: 6 minutes: 42, seconds: 20}

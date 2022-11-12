@@ -15,6 +15,8 @@ const refs = {
 
 const calendars = flatpickr('.calendar', {});
 calendars[0]; // flatpickr
+let startTime = null;
+let timeToEnd = null;
 
 const options = {
   enableTime: true,
@@ -28,14 +30,14 @@ const options = {
       alert('Please choose a date in the future');
     } else {
       refs.start.disabled = false;
-      console.log(convertMs(selectedDates[0].getTime() - Date.now()));
+      // console.log(convertMs(selectedDates[0] - Date.now()));
+      startTime = selectedDates[0].getTime();
+      // console.log(startTime);
     }
   },
 };
 
 const fp = flatpickr(refs.myInput, options);
-// console.log(fp.selectedDates);
-// console.log(refs.days.textContent);
 
 function convertMs(ms) {
   // Number of milliseconds per unit of time
@@ -56,6 +58,33 @@ function convertMs(ms) {
   return { days, hours, minutes, seconds };
 }
 
-// console.log(convertMs(2000)); // {days: 0, hours: 0, minutes: 0, seconds: 2}
-// console.log(convertMs(140000)); // {days: 0, hours: 0, minutes: 2, seconds: 20}
-// console.log(convertMs(24140000)); // {days: 0, hours: 6 minutes: 42, seconds: 20}
+refs.start.addEventListener('click', onStartHandler);
+
+function onStartHandler() {
+  const timer = setInterval(() => {
+    timeToEnd = convertMs(startTime - Date.now());
+
+    refs.days.textContent = addLeadingZero(timeToEnd.days);
+    refs.hours.textContent = addLeadingZero(timeToEnd.hours);
+    refs.minutes.textContent = addLeadingZero(timeToEnd.minutes);
+    refs.seconds.textContent = addLeadingZero(timeToEnd.seconds);
+
+    if (
+      refs.days.textContent === '00' &&
+      refs.hours.textContent === '00' &&
+      refs.minutes.textContent === '00' &&
+      refs.seconds.textContent === '00'
+    ) {
+      clearInterval(timer);
+    }
+  }, 1000);
+}
+
+const addLeadingZero = value => {
+  return value.toString().padStart(2, '0');
+};
+
+// const str1 = '5';
+
+// console.log(str1.padStart(2, '0'));
+// console.log(addLeadingZero(55));

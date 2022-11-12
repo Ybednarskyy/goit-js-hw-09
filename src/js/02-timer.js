@@ -12,7 +12,7 @@ const refs = {
 };
 
 // const myInput = document.querySelector('#datetime-picker');
-
+refs.start.disabled = true;
 const calendars = flatpickr('.calendar', {});
 calendars[0]; // flatpickr
 let startTime = null;
@@ -27,7 +27,10 @@ const options = {
     // console.log(selectedDates[0]);
     if (selectedDates[0].getTime() - Date.now() < 0) {
       refs.start.disabled = true;
-      alert('Please choose a date in the future');
+      // alert('Please choose a date in the future');
+      Notiflix.Notify.failure('Please choose a date in the future', {
+        timeout: 3000,
+      });
     } else {
       refs.start.disabled = false;
       // console.log(convertMs(selectedDates[0] - Date.now()));
@@ -76,6 +79,7 @@ function onStartHandler() {
       refs.seconds.textContent === '00'
     ) {
       clearInterval(timer);
+      Notiflix.Notify.success('Time out');
     }
   }, 1000);
 }

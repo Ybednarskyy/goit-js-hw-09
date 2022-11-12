@@ -29,7 +29,7 @@ const options = {
       refs.start.disabled = true;
       // alert('Please choose a date in the future');
       Notiflix.Notify.failure('Please choose a date in the future', {
-        timeout: 3000,
+        timeout: 2000,
       });
     } else {
       refs.start.disabled = false;
@@ -79,7 +79,10 @@ function onStartHandler() {
       refs.seconds.textContent === '00'
     ) {
       clearInterval(timer);
-      Notiflix.Notify.success('Time out');
+      Notiflix.Report.success('', 'Time out!', 'Ok', {
+        width: '360px',
+        svgSize: '120px',
+      });
     }
   }, 1000);
 }
